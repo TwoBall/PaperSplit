@@ -1,0 +1,839 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --primary-color: #6366f1;
+    --secondary-color: #f1f5f9;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --text-main: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --surface-color: #ffffff;
+    --bg-color: #f8fafc;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+    --radius: 8px;
+    --header-height: 64px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+body {
+    font-family: 'Outfit', -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.navbar {
+    height: var(--header-height);
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-shadow: var(--shadow-sm);
+    z-index: 50;
+    flex-shrink: 0;
+}
+
+/* Top Nav Controls - Integrated Style */
+.top-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    /* Remove boxy style for better integration */
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0 24px;
+    flex: 1;
+    /* Allow it to take available space */
+    justify-content: center;
+    /* Center in the header */
+}
+
+/* Refine Page Nav for Header */
+.page-nav-compact {
+    display: flex;
+    align-items: center;
+    background: var(--secondary-color);
+    /* Light gray background */
+    border: 1px solid transparent;
+    /* Remove border line, keep structure */
+    border-radius: 6px;
+    /* Squarer look for toolbar */
+    padding: 2px 4px;
+    height: 32px;
+    /* Fixed height for consistency */
+}
+
+.page-nav-compact .btn.icon-only {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    /* More standard toolbar button shape */
+}
+
+.page-nav-compact .page-number-display {
+    font-size: 0.9rem;
+    min-width: 60px;
+    /* Provide more space */
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Fix syntax error at end of file */
+.application-group {
+    background: #ffffff;
+    /* White to contrast with container */
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: white;
+    background: var(--primary-gradient);
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.declaration {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+/* Main Layout - 3 Columns */
+.main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - var(--header-height));
+}
+
+/* Left Panel */
+.left-panel {
+    width: 240px;
+    background: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-shrink: 0;
+    min-width: 240px;
+    /* Prevent collapse */
+}
+
+/* Center Panel */
+.center-panel {
+    flex: 1;
+    position: relative;
+    background-color: #f1f5f9;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Center content vertically and horizontally */
+    padding: 20px;
+    overflow: hidden;
+    /* Prevent scrolling, force fit */
+}
+
+/* Right Panel */
+.right-panel {
+    width: 320px;
+    background: var(--surface-color);
+    border-left: 1px solid var(--border-color);
+    padding: 16px;
+    /* Reduced padding */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* Reduced gap */
+    overflow-y: auto;
+    /* Keep auto just in case on very small screens, but aim for no scroll */
+    flex-shrink: 0;
+}
+
+/* ... existing styles ... */
+
+/* Panel Styles */
+.panel-section {
+    display: flex;
+    flex-direction: column;
+    /* Reduced gap */
+    gap: 8px;
+}
+
+.panel-section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.panel-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 12px 0;
+    /* Reduced margin */
+    flex-shrink: 0;
+}
+
+.spacer {
+    height: 10px;
+    flex: 0;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.btn.primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.btn.primary:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+.btn.secondary {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.btn.secondary:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: #f8fafc;
+}
+
+.btn.danger-outline {
+    background: transparent;
+    border: 1px solid #fecaca;
+    color: var(--danger-color);
+}
+
+.btn.danger-outline:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: var(--danger-color);
+}
+
+.btn.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn.success.large {
+    padding: 14px 20px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.btn.icon {
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    background: transparent;
+}
+
+.btn.icon:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: var(--text-main);
+}
+
+/* Drag Overlay */
+.drag-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(99, 102, 241, 0.05);
+    /* Very light blue tint */
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    border: 4px dashed var(--primary-color);
+    margin: 16px;
+    border-radius: 12px;
+}
+
+.drag-overlay.hidden {
+    display: none;
+}
+
+.drag-overlay .material-icons {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.drag-overlay p {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+/* Split Line Styles */
+.split-line {
+    position: absolute;
+    top: -24px;
+    bottom: -24px;
+    width: 4px;
+    background: rgba(239, 68, 68, 0.8);
+    cursor: ew-resize;
+    z-index: 100;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.split-line:hover,
+.split-line.dragging {
+    background: var(--danger-color);
+    width: 6px;
+    margin-left: -1px;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.split-line::after,
+.split-line::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    background: var(--danger-color);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border: 3px solid white;
+    transition: transform 0.2s;
+    pointer-events: none;
+}
+
+.split-line::before {
+    top: 0;
+}
+
+.split-line::after {
+    bottom: 0;
+}
+
+.split-line:hover::after,
+.split-line:hover::before {
+    transform: translateX(-50%) scale(1.2);
+}
+
+/* Left Panel Thumbnails */
+.thumbnail-item {
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    background: white;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+}
+
+.thumbnail-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.thumbnail-item.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.thumbnail-item canvas {
+    width: 100%;
+    display: block;
+}
+
+.page-number {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+/* CSS ADDED BY USER REQUEST */
+
+/* Add specific styles for the center upload button and pagination bar divider */
+.large-btn {
+    margin-top: 24px;
+    padding: 12px 32px;
+    font-size: 1.1rem;
+    border-radius: 24px;
+}
+
+.v-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--border-color);
+    margin: 0 4px;
+}
+
+/* Ensure empty state layout is good */
+.empty-state h3 {
+    margin-top: 16px;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--text-main);
+}
+
+.empty-state .sub-text {
+    margin-bottom: 8px;
+}
+
+/* Refined Right Panel Control Styles */
+
+.control-card {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.control-row .label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.page-nav-compact {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.page-number-display {
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+    padding: 0 8px;
+    min-width: 44px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.btn.icon-only {
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    background: transparent;
+    display: flex;
+    /* Ensure icon is centered */
+    align-items: center;
+    justify-content: center;
+}
+
+.btn.icon-only:hover:not(:disabled) {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+}
+
+.btn.icon-only .material-icons {
+    font-size: 18px;
+    /* Smaller icon for compact nav */
+}
+
+/* Step Guide Styles */
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* Card Style */
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.tools-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* Card Style */
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.tools-grid .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.step-item {
+    display: flex;
+    gap: 12px;
+}
+
+.step-num {
+    width: 24px;
+    height: 24px;
+    background-color: #e0e7ff;
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.step-text {
+    flex: 1;
+}
+
+.step-text strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.step-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Footer Shadow Button */
+.shadow-btn {
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4), 0 2px 4px -1px rgba(16, 185, 129, 0.2);
+    transition: all 0.2s;
+}
+
+.shadow-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+/* Restored Empty State Styles */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    min-height: 300px;
+    color: var(--text-secondary);
+    border: 3px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 32px;
+    text-align: center;
+    margin: auto;
+    /* Center in flex container */
+}
+
+.empty-state .material-icons {
+    font-size: 64px;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.sub-text {
+    font-size: 0.9rem;
+    margin-top: 8px;
+    opacity: 0.7;
+}
+
+/* Ensure footer action button matches tools width */
+.footer-actions .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Button Group */
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-group .btn {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 8px;
+}
+
+.control-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+}
+
+/* Seal Line Styles */
+.split-line.seal {
+    background: repeating-linear-gradient(to bottom,
+            #94a3b8,
+            #94a3b8 8px,
+            transparent 8px,
+            transparent 16px);
+    width: 2px;
+    box-shadow: none;
+}
+
+.split-line.seal::after,
+.split-line.seal::before {
+    background: #94a3b8;
+    /* Gray handle */
+}
+
+.split-line.seal:hover,
+.split-line.seal.dragging {
+    background: #64748b;
+    width: 4px;
+}
+
+/* Ensure Split Line is distinct */
+.split-line.split {
+    z-index: 101;
+    /* Above seal line */
+}
+
+/* Tool Sub-labels */
+.sub-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    /* Semi-bold */
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.helper-text {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    margin-bottom: 0;
+    opacity: 0.8;
+}
+
+.application-group {
+    background: #ffffff;
+    /* White to contrast with container */
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+/* Response Design for Mobile */
+@media (max-width: 768px) {
+    body {
+        height: 100%;
+        overflow: auto;
+    }
+
+    .main-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Header Adjustments */
+    .navbar {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .branding .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .user-profile {
+        display: none;
+        /* Hide for space */
+    }
+
+    .top-nav-controls {
+        order: 3;
+        width: 100%;
+        margin: 0;
+        justify-content: space-between;
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    /* Left Panel - Thumbnails */
+    .left-panel {
+        width: 100%;
+        min-width: 0;
+        height: 120px;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 10px;
+    }
+
+    .thumbnail-item {
+        min-width: 80px;
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Center Panel - Canvas */
+    .center-panel {
+        min-height: 50vh;
+        padding: 10px;
+    }
+
+    /* Right Panel - Tools */
+    .right-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        height: auto;
+        overflow-y: visible;
+    }
+
+    /* Adjust tools grid for mobile */
+    .tools-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .footer-actions {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 12px;
+        border-top: 1px solid var(--border-color);
+        z-index: 100;
+        margin: -16px;
+        margin-top: 16px;
+        width: calc(100% + 32px);
+    }
+}

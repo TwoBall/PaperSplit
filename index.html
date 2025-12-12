@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperSplit - A3 试卷拆分</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部只保留 Logo 和 用户信息 -->
+        <header class="navbar">
+            <div class="branding">
+                <span class="material-icons logo-icon">content_cut</span>
+                <span class="logo-text">PaperSplit</span>
+            </div>
+
+            <!-- Central Navigation -->
+            <div class="top-nav-controls">
+                <button id="changeFileBtn" class="btn secondary small-btn" title="更换文件">
+                    <span class="material-icons">folder_open</span> 切换文件
+                </button>
+                <div class="v-divider"></div>
+                <div class="page-nav-compact">
+                    <button id="prevPageBtn" class="btn icon-only" disabled>
+                        <span class="material-icons">chevron_left</span>
+                    </button>
+                    <span id="pageInfo" class="page-number-display">0 / 0</span>
+                    <button id="nextPageBtn" class="btn icon-only" disabled>
+                        <span class="material-icons">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="user-profile">
+                <a href="https://github.com/TwoBall/PaperSplit" target="_blank" class="user-badge"
+                    style="text-decoration: none;" title="View on GitHub">
+                    <span class="material-icons">code</span>
+                    <span class="username">GitHub</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- 三栏布局主体 -->
+        <main class="main-layout">
+            <!-- 左侧：缩略图 -->
+            <aside class="left-panel custom-scrollbar" id="thumbnailsPanel">
+                <!-- 缩略图动态生成 -->
+            </aside>
+
+            <!-- 中间：工作区 (支持拖拽上传) -->
+            <section class="center-panel" id="canvasContainer">
+                <!-- 拖拽遮罩 -->
+                <div id="dragOverlay" class="drag-overlay hidden">
+                    <span class="material-icons">cloud_upload</span>
+                    <p>释放文件以上传</p>
+                </div>
+
+                <div id="canvasWrapper" class="canvas-wrapper">
+                    <div class="empty-state" id="emptyState">
+                        <span class="material-icons">cloud_upload</span>
+                        <h3>点击上传或拖拽文件</h3>
+                        <p class="sub-text">支持 A3 PDF 或图片文件</p>
+                        <button id="uploadBtn" class="btn primary large-btn">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：控制面板 -->
+            <aside class="right-panel custom-scrollbar">
+
+                <div class="panel-section" id="guideSection">
+                    <h3>📋 操作指南</h3>
+                    <div class="guide-steps">
+                        <div class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-text">
+                                <strong>导入试卷</strong>
+                                <p>上传 A3 PDF 或图片，自动显示第一页</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-text">
+                                <strong>调整分割</strong>
+                                <p>拖动红色实线确定 A4 分割位置</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-text">
+                                <strong>密封线(可选)</strong>
+                                <p>点击“添加”可设置密封区域 (奇左偶右)，拖动虚线调整</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-text">
+                                <strong>批量与导出</strong>
+                                <p>使用“同类页”快速应用配置，最后导出 A4 PDF</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-divider"></div>
+
+                <div class="panel-section">
+                    <h3>🛠️ 编辑工具</h3>
+                    <div class="tools-grid">
+                        <button id="toggleSealLineBtn" class="btn secondary" disabled>
+                            <span class="material-icons">format_shapes</span> 去除密封线
+                        </button>
+
+                        <div class="application-group">
+                            <span class="sub-label">批量应用</span>
+                            <div class="btn-group">
+                                <button id="applyToTypeBtn" class="btn secondary" disabled title="应用到同类页">
+                                    同类页
+                                </button>
+                                <button id="applyToAllBtn" class="btn secondary" disabled title="应用到所有页">
+                                    所有页
+                                </button>
+                            </div>
+                            <p class="helper-text">* 同类页指所有奇数页或所有偶数页</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spacer"></div>
+
+                <div class="panel-section footer-actions">
+                    <!-- Hidden File Input -->
+                    <input type="file" id="fileInput" accept="application/pdf,image/*" hidden>
+
+                    <button id="exportBtn" class="btn success full-width large shadow-btn" disabled>
+                        <span class="material-icons">save_alt</span> 导出为 PDF (A4)
+                    </button>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+
+</html>

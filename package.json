@@ -1,0 +1,30 @@
+{
+  "name": "paper-split",
+  "version": "1.0.0",
+  "description": "A privacy-focused web tool to split A3 PDFs into A4 pages with seal line removal.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "TwoBall",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TwoBall/PaperSplit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TwoBall/PaperSplit/issues"
+  },
+  "homepage": "https://github.com/TwoBall/PaperSplit#readme",
+  "type": "module",
+  "dependencies": {
+    "jspdf": "^3.0.4",
+    "pdfjs-dist": "^5.4.449"
+  },
+  "devDependencies": {
+    "vite": "^7.2.7"
+  }
+}
