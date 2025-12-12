@@ -1,4 +1,7 @@
-# PaperSplit
+<div align="center">
+  <img src="public/favicon.png" alt="PaperSplit Logo" width="120" height="120">
+  <h1>PaperSplit</h1>
+</div>
 
 **[English](#english) | [中文指南](#中文)**
 
