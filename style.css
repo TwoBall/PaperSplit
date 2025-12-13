@@ -140,7 +140,8 @@ body {
     border-right: 1px solid var(--border-color);
     overflow-y: auto;
     padding: 20px;
-    display: flex;
+    display: none;
+    /* 初始隐藏，上传文件后显示 */
     flex-direction: column;
     gap: 16px;
     flex-shrink: 0;

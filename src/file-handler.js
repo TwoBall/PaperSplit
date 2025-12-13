@@ -20,6 +20,12 @@ export async function handleFileUpload(e) {
     elements.thumbnailsPanel.innerHTML = '';
     elements.emptyState.style.display = 'none';
 
+    // 显示缩略图面板（之前隐藏的）
+    const leftPanel = document.querySelector('.left-panel');
+    if (leftPanel) {
+        leftPanel.style.display = 'flex';
+    }
+
     // 启用相关按钮
     elements.toggleSealLineBtn.disabled = false;
     elements.exportBtn.disabled = false;

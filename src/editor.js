@@ -3,7 +3,7 @@ import { elements } from './dom.js';
 
 /**
  * 获取或初始化当前页面的配置
- * 结构: { splitX: 0.5, sealLine: null | { x: 0.1, type: 'left'|'right' } }
+ * 结构: { splitX: 0.5, sealLine: null | { x: 0.15 (左) / 0.85 (右), type: 'left'|'right' } }
  * @param {number} pageIndex 页面索引 (1-based)
  * @returns {Object} 页面配置对象
  */
@@ -65,71 +65,80 @@ function createLineElement(initialX, type, onUpdate) {
 
     // 拖拽状态
     let isDragging = false;
+    let startX = 0;
+    let startLeft = 0; // 记录初始百分比
 
-    const onMouseDown = (e) => {
+    const onDragStart = (clientX) => {
         isDragging = true;
-        e.preventDefault();
+        startX = clientX;
+        // 获取当前 style.left 的百分比数值 (去除 %)
+        startLeft = parseFloat(lineEl.style.left);
+        lineEl.classList.add('dragging');
+    };
+
+    const onDragMove = (clientX) => {
+        if (!isDragging) return;
+
+        const rect = elements.canvasWrapper.getBoundingClientRect();
+        const deltaX = clientX - startX;
+        const deltaPercent = (deltaX / rect.width) * 100;
+
+        let newPercent = startLeft + deltaPercent;
+
+        // 边界限制 (0% - 100%)
+        newPercent = Math.max(0, Math.min(newPercent, 100));
+
+        lineEl.style.left = `${newPercent}%`;
+        onUpdate(newPercent / 100);
+    };
+
+    const onDragEnd = () => {
+        isDragging = false;
+        lineEl.classList.remove('dragging');
+    };
+
+    // Mouse Events
+    const onMouseDown = (e) => {
+        e.preventDefault(); // 防止选中文本
+        onDragStart(e.clientX);
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
-        lineEl.classList.add('dragging');
     };
 
     const onMouseMove = (e) => {
         if (!isDragging) return;
-        const rect = elements.canvasWrapper.getBoundingClientRect();
-        let newX = e.clientX - rect.left;
-
-        // 边界限制
-        newX = Math.max(0, Math.min(newX, rect.width));
-        const newPercent = newX / rect.width;
-
-        lineEl.style.left = `${newPercent * 100}%`;
-        onUpdate(newPercent);
+        e.preventDefault();
+        onDragMove(e.clientX);
     };
 
     const onMouseUp = () => {
-        isDragging = false;
-        lineEl.classList.remove('dragging');
+        onDragEnd();
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
     };
 
-
-    // 鼠标事件
-    lineEl.addEventListener('mousedown', onMouseDown);
-
-    // 触摸事件支持 (Mobile)
+    // Touch Events (Mobile)
     const onTouchStart = (e) => {
         if (e.touches.length !== 1) return;
-        isDragging = true;
         e.preventDefault(); // 防止页面滚动
+        onDragStart(e.touches[0].clientX);
         document.addEventListener('touchmove', onTouchMove, { passive: false });
         document.addEventListener('touchend', onTouchEnd);
-        lineEl.classList.add('dragging');
     };
 
     const onTouchMove = (e) => {
         if (!isDragging) return;
-        e.preventDefault(); // 重要：防止拖拽时触发滚动
-        const touch = e.touches[0];
-        const rect = elements.canvasWrapper.getBoundingClientRect();
-        let newX = touch.clientX - rect.left;
-
-        // 边界限制
-        newX = Math.max(0, Math.min(newX, rect.width));
-        const newPercent = newX / rect.width;
-
-        lineEl.style.left = `${newPercent * 100}%`;
-        onUpdate(newPercent);
+        e.preventDefault(); // 防止滚动
+        onDragMove(e.touches[0].clientX);
     };
 
     const onTouchEnd = () => {
-        isDragging = false;
-        lineEl.classList.remove('dragging');
+        onDragEnd();
         document.removeEventListener('touchmove', onTouchMove);
         document.removeEventListener('touchend', onTouchEnd);
     };
 
+    lineEl.addEventListener('mousedown', onMouseDown);
     lineEl.addEventListener('touchstart', onTouchStart, { passive: false });
 
     elements.canvasWrapper.appendChild(lineEl);
@@ -147,13 +156,13 @@ export function toggleSealLine() {
         config.sealLine = null;
     } else {
         // 添加密封线
-        // 奇数页 (1, 3, 5): 左侧 (0.1)
-        // 偶数页 (2, 4, 6): 右侧 (0.9)
+        // 奇数页 (1, 3, 5): 左侧 (0.15) - 稍微宽一点
+        // 偶数页 (2, 4, 6): 右侧 (0.85)
         const isOdd = state.currentPage % 2 !== 0;
         if (isOdd) {
-            config.sealLine = { x: 0.1, type: 'left' };
+            config.sealLine = { x: 0.15, type: 'left' };
         } else {
-            config.sealLine = { x: 0.9, type: 'right' };
+            config.sealLine = { x: 0.8, type: 'right' };
         }
     }
     renderSplitLines();

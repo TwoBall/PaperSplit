@@ -120,9 +120,15 @@ npm run dev
 ## 📄 License
 
 
+
 MIT License
 
 ## 📅 Changelog / 更新日志
+
+### 2025-12-13 (Evening Update)
+- **Bug Fix**: Fixed seal line drag jumping issue using delta-based calculation.
+- **UX Improvement**: Auto-hide left thumbnail panel when no file is uploaded.
+- **Config Adjustment**: Optimized default seal line position to 0.15/0.85 for better accuracy.
 
 ### 2025-12-13
 - **Mobile Support**: Added touch event support for smooth split-line dragging on mobile devices.
