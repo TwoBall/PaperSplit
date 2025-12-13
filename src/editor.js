@@ -94,7 +94,44 @@ function createLineElement(initialX, type, onUpdate) {
         document.removeEventListener('mouseup', onMouseUp);
     };
 
+
+    // 鼠标事件
     lineEl.addEventListener('mousedown', onMouseDown);
+
+    // 触摸事件支持 (Mobile)
+    const onTouchStart = (e) => {
+        if (e.touches.length !== 1) return;
+        isDragging = true;
+        e.preventDefault(); // 防止页面滚动
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onTouchEnd);
+        lineEl.classList.add('dragging');
+    };
+
+    const onTouchMove = (e) => {
+        if (!isDragging) return;
+        e.preventDefault(); // 重要：防止拖拽时触发滚动
+        const touch = e.touches[0];
+        const rect = elements.canvasWrapper.getBoundingClientRect();
+        let newX = touch.clientX - rect.left;
+
+        // 边界限制
+        newX = Math.max(0, Math.min(newX, rect.width));
+        const newPercent = newX / rect.width;
+
+        lineEl.style.left = `${newPercent * 100}%`;
+        onUpdate(newPercent);
+    };
+
+    const onTouchEnd = () => {
+        isDragging = false;
+        lineEl.classList.remove('dragging');
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+    };
+
+    lineEl.addEventListener('touchstart', onTouchStart, { passive: false });
+
     elements.canvasWrapper.appendChild(lineEl);
 }
 

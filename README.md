@@ -119,4 +119,14 @@ npm run dev
 
 ## 📄 License
 
+
 MIT License
+
+## 📅 Changelog / 更新日志
+
+### 2025-12-13
+- **Mobile Support**: Added touch event support for smooth split-line dragging on mobile devices.
+- **UI Redesign**: Replaced split-line dots with an arrow handle (`↔`) for better visibility and usability.
+- **Style Optimization**: Refactored `style.css` with cleaner structure and removed redundant code.
+- **Branding**: Updated project icon and header logo.
+
