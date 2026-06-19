@@ -142,6 +142,15 @@
                     <!-- Hidden File Input -->
                     <input type="file" id="fileInput" accept="application/pdf,image/*" hidden>
 
+                    <div class="export-options">
+                        <label class="sub-label" for="exportFitSelect">导出尺寸</label>
+                        <select id="exportFitSelect" class="select-input">
+                            <option value="a4-fit" selected>标准 A4（等比留白）</option>
+                            <option value="a4-fill">标准 A4（拉伸填满）</option>
+                            <option value="wysiwyg">原始裁剪尺寸（所见即所得）</option>
+                        </select>
+                    </div>
+
                     <button id="exportBtn" class="btn success full-width large shadow-btn" disabled>
                         <span class="material-icons">save_alt</span> 导出为 PDF (A4)
                     </button>

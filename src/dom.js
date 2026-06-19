@@ -13,6 +13,7 @@ export const elements = {
     applyToAllBtn: document.getElementById('applyToAllBtn'),
 
     exportBtn: document.getElementById('exportBtn'),
+    exportFitSelect: document.getElementById('exportFitSelect'),
     thumbnailsPanel: document.getElementById('thumbnailsPanel'),
     canvasContainer: document.getElementById('canvasContainer'),
     canvasWrapper: document.getElementById('canvasWrapper'),

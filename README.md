@@ -22,7 +22,7 @@
 *   **Batch Application**:
     *   **Apply to Same Type**: One-click apply settings to all Odd or all Even pages.
     *   **Apply to All**: Apply current configuration to every page.
-*   **HD Export**: Generates high-quality A4 PDF documents using `jsPDF`.
+*   **HD Export**: Generates high-quality A4 PDF documents using `jsPDF`, with selectable page-fit modes (standard A4 with margins, stretch-to-fill, or original crop size).
 *   **Responsive Design**: Works perfectly on both PC and mobile devices.
 
 ### 🚀 Quick Start
@@ -66,7 +66,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 *   **批量应用**：
     *   **同类页**：一键应用当前配置到所有奇数页或所有偶数页。
     *   **所有页**：一键应用到文档所有页面。
-*   **高清导出**：基于 `jsPDF` 生成高质量的 A4 PDF 文档。
+*   **高清导出**：基于 `jsPDF` 生成高质量的 A4 PDF 文档，并可选择导出尺寸适配方式（标准A4等比留白 / 拉伸填满 / 原始裁剪尺寸）。
 *   **响应式设计**：完美适配 PC 和移动端操作，手机上也能轻松处理试卷。
 
 ### 🚀 快速开始
@@ -124,6 +124,9 @@ npm run dev
 MIT License
 
 ## 📅 Changelog / 更新日志
+
+### 2026-06-20 (Export Fit Modes / 导出尺寸适配)
+- **Selectable Export Fit**: Added an "导出尺寸" selector with three modes — **Standard A4 (fit, with margins)** [default], **Standard A4 (stretch to fill)**, and **Original crop size (WYSIWYG)**. Dragging the split line off-center no longer forces non-A4 pages unless you choose WYSIWYG. 新增"导出尺寸"选择器：标准A4等比留白(默认)、标准A4拉伸填满、原始裁剪尺寸；切割线偏离中心也能稳定输出标准 A4。
 
 ### 2026-06-20 (Bug Fixes / 问题修复)
 - **Render Race Fix**: `renderCurrentPage` now uses a render token to discard stale concurrent renders, and the window-resize handler is debounced (150ms) — no more duplicate canvases / overlapping guide lines when resizing or switching pages quickly. 修复窗口缩放、快速翻页时画布与辅助线重影的问题。

@@ -13,6 +13,9 @@ export async function exportPdf() {
     elements.exportBtn.disabled = true;
     elements.exportBtn.textContent = '生成中...';
 
+    // 导出适配模式：'a4-fit'(等比留白) | 'a4-fill'(拉伸填满) | 'wysiwyg'(原始裁剪尺寸)
+    const fit = elements.exportFitSelect ? elements.exportFitSelect.value : 'a4-fit';
+
     try {
         // 延迟创建：首页尺寸需贴合第一片裁剪区域 (所见即所得)
         let doc = null;
@@ -93,12 +96,36 @@ export async function exportPdf() {
 
                 const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
 
-                // 所见即所得：页面尺寸 = 裁剪区域。
-                // 高度锁定 A4 (297mm)，宽度按裁剪比例 → 图片铺满整页，无白边、不缩放居中。
-                // 标准 A3 对半切正好得到 210×297 的 A4。
-                const pageHeight = 297;
-                const pageWidth = pageHeight * (sWidth / sHeight);
-                const orientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
+                // 根据导出适配模式确定页面尺寸与图片绘制区域
+                let pageWidth, pageHeight, orientation;
+                let drawX, drawY, drawW, drawH;
+
+                if (fit === 'wysiwyg') {
+                    // 所见即所得：页面尺寸 = 裁剪区域，图片铺满整页（无白边、不变形）。
+                    // 高度锁定 297mm，宽度按裁剪比例。标准 A3 对半切正好得到 210×297 的 A4。
+                    pageHeight = 297;
+                    pageWidth = pageHeight * (sWidth / sHeight);
+                    orientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
+                    drawX = 0; drawY = 0; drawW = pageWidth; drawH = pageHeight;
+                } else {
+                    // 标准 A4 纵向 (210×297mm)
+                    pageWidth = 210; pageHeight = 297; orientation = 'portrait';
+                    if (fit === 'a4-fill') {
+                        // 拉伸填满：图片铺满整页，切偏时内容会被轻微拉伸变形
+                        drawX = 0; drawY = 0; drawW = 210; drawH = 297;
+                    } else {
+                        // 等比留白 (a4-fit)：保持裁剪比例缩放并居中，切偏时四周留白、不变形
+                        const sliceAspect = sWidth / sHeight;
+                        const a4Aspect = 210 / 297;
+                        if (sliceAspect > a4Aspect) {
+                            drawW = 210; drawH = 210 / sliceAspect;
+                        } else {
+                            drawH = 297; drawW = 297 * sliceAspect;
+                        }
+                        drawX = (210 - drawW) / 2;
+                        drawY = (297 - drawH) / 2;
+                    }
+                }
 
                 if (!doc) {
                     doc = new jsPDF({ unit: 'mm', orientation, format: [pageWidth, pageHeight] });
@@ -106,7 +133,7 @@ export async function exportPdf() {
                     doc.addPage([pageWidth, pageHeight], orientation);
                 }
 
-                doc.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+                doc.addImage(imgData, 'JPEG', drawX, drawY, drawW, drawH);
             }
         }
 
