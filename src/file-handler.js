@@ -17,6 +17,16 @@ export async function handleFileUpload(e) {
 
     resetState();
     state.fileName = file.name.replace(/\.[^/.]+$/, "");
+
+    if (file.type === 'application/pdf') {
+        state.isPdf = true;
+    } else if (file.type.startsWith('image/')) {
+        state.isPdf = false;
+    } else {
+        alert('不支持的文件格式，请上传 PDF 或图片文件');
+        return;
+    }
+
     elements.thumbnailsPanel.innerHTML = '';
     elements.emptyState.style.display = 'none';
 
@@ -26,18 +36,16 @@ export async function handleFileUpload(e) {
         leftPanel.style.display = 'flex';
     }
 
-    // 启用相关按钮
+    // 启用相关按钮（已确认是受支持的文件类型）
     elements.toggleSealLineBtn.disabled = false;
     elements.exportBtn.disabled = false;
     elements.applyToTypeBtn.disabled = false;
     elements.applyToAllBtn.disabled = false;
 
-    if (file.type === 'application/pdf') {
-        state.isPdf = true;
+    if (state.isPdf) {
         const arrayBuffer = await file.arrayBuffer();
         loadPdf(arrayBuffer);
-    } else if (file.type.startsWith('image/')) {
-        state.isPdf = false;
+    } else {
         loadImage(file);
     }
 }

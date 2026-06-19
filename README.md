@@ -125,6 +125,12 @@ MIT License
 
 ## 📅 Changelog / 更新日志
 
+### 2026-06-20 (Bug Fixes / 问题修复)
+- **Render Race Fix**: `renderCurrentPage` now uses a render token to discard stale concurrent renders, and the window-resize handler is debounced (150ms) — no more duplicate canvases / overlapping guide lines when resizing or switching pages quickly. 修复窗口缩放、快速翻页时画布与辅助线重影的问题。
+- **Unsupported File Handling**: File type is now validated *before* enabling controls; unknown formats show an alert and abort instead of leaving the UI half-enabled. `resetState` now also resets `isPdf`. 上传不支持的文件类型不再留下"半启用"状态。
+- **Seal Line Symmetry**: Even-page default seal position corrected from `0.8` to `0.85`, symmetric with the odd-page `0.15`. 修正偶数页默认密封线位置，与奇数页对称。
+- **Export Geometry**: Seal direction is now driven by `seal.type` (not its position relative to the split line), and the split point is clamped into the kept region — dragging a seal line across the split line can no longer leak the sealed area or produce inverted slices. 导出时密封方向由语义决定并钳制分割点，杜绝密封区外泄与反向切片。
+
 ### 2025-12-13 (Evening Update)
 - **Bug Fix**: Fixed seal line drag jumping issue using delta-based calculation.
 - **UX Improvement**: Auto-hide left thumbnail panel when no file is uploaded.

@@ -22,4 +22,5 @@ export function resetState() {
     state.totalPages = 0;
     state.pagesData = {};
     state.fileData = null;
+    state.isPdf = true;
 }

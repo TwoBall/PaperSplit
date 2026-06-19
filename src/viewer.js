@@ -33,8 +33,11 @@ export function updatePageControls() {
  * 渲染当前主页面的 Canvas
  * 会自动计算缩放比例以适应容器
  */
+let renderToken = 0;
+
 export async function renderCurrentPage() {
-    elements.canvasWrapper.innerHTML = ''; // 清除旧的 Canvas 和裁切线
+    // 每次渲染分配一个唯一令牌；异步完成后若令牌已过期则丢弃，避免并发渲染叠加重影
+    const myToken = ++renderToken;
 
     let canvas, viewport;
 
@@ -69,8 +72,11 @@ export async function renderCurrentPage() {
     } else {
         // 图片渲染
         const img = new Image();
-        img.src = state.fileData;
-        await new Promise(r => img.onload = r);
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = state.fileData;
+        });
 
         const availableWidth = elements.canvasContainer.clientWidth - 40;
         const availableHeight = elements.canvasContainer.clientHeight - 40;
@@ -90,6 +96,10 @@ export async function renderCurrentPage() {
         viewport = { width: canvas.width, height: canvas.height };
     }
 
+    // 渲染期间若有更新的渲染请求（翻页/缩放），则放弃本次结果
+    if (myToken !== renderToken) return;
+
+    elements.canvasWrapper.innerHTML = ''; // 清除旧的 Canvas 和裁切线
     elements.canvasWrapper.style.width = `${canvas.width}px`;
     elements.canvasWrapper.style.height = `${canvas.height}px`;
     elements.canvasWrapper.appendChild(canvas);

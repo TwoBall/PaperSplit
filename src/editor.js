@@ -156,13 +156,13 @@ export function toggleSealLine() {
         config.sealLine = null;
     } else {
         // 添加密封线
-        // 奇数页 (1, 3, 5): 左侧 (0.15) - 稍微宽一点
-        // 偶数页 (2, 4, 6): 右侧 (0.85)
+        // 奇数页 (1, 3, 5): 左侧 (0.15)
+        // 偶数页 (2, 4, 6): 右侧 (0.85)，与左侧对称，各留 15% 边距
         const isOdd = state.currentPage % 2 !== 0;
         if (isOdd) {
             config.sealLine = { x: 0.15, type: 'left' };
         } else {
-            config.sealLine = { x: 0.8, type: 'right' };
+            config.sealLine = { x: 0.85, type: 'right' };
         }
     }
     renderSplitLines();

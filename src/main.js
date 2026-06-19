@@ -68,11 +68,16 @@ function handleDrop(e) {
 
 /**
  * 处理窗口调整事件，重新渲染当前页面以适应新尺寸
+ * 使用防抖，避免拖动窗口时高频触发并发渲染
  */
+let resizeTimer = null;
 function handleResize() {
-    if (state.pdfDoc || state.fileData) {
-        renderCurrentPage();
-    }
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        if (state.pdfDoc || state.fileData) {
+            renderCurrentPage();
+        }
+    }, 150);
 }
 
 // 启动程序

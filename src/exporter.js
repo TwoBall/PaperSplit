@@ -33,14 +33,18 @@ export async function exportPdf() {
             const seal = config.sealLine;
 
             if (seal) {
-                if (seal.x < splitX) {
-                    // 左侧密封: [Seal -> Split], [Split -> 1]
-                    ranges.push([seal.x, splitX]);
-                    ranges.push([splitX, 1]);
+                // 密封方向由 seal.type 决定（与线的语义一致），不受其相对分割线的位置影响。
+                // 分割点钳制到保留区域内，避免密封线被拖过分割线时产生反向切片或漏出密封区。
+                if (seal.type === 'left') {
+                    // 左侧密封：丢弃 [0, Seal]，保留 [Seal, 1] 再按分割线切分
+                    const split = Math.min(Math.max(splitX, seal.x), 1);
+                    ranges.push([seal.x, split]);
+                    ranges.push([split, 1]);
                 } else {
-                    // 右侧密封: [0 -> Split], [Split -> Seal]
-                    ranges.push([0, splitX]);
-                    ranges.push([splitX, seal.x]);
+                    // 右侧密封：丢弃 [Seal, 1]，保留 [0, Seal] 再按分割线切分
+                    const split = Math.max(Math.min(splitX, seal.x), 0);
+                    ranges.push([0, split]);
+                    ranges.push([split, seal.x]);
                 }
             } else {
                 // 无密封: [0 -> Split], [Split -> 1]
