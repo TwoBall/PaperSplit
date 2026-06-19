@@ -526,6 +526,15 @@ body {
 /* ==========================================================================
    Feature: Split Line & Seal Line (Updated for Mobile)
    ========================================================================== */
+.canvas-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.canvas-wrapper canvas {
+    display: block;
+}
+
 .split-line {
     position: absolute;
     top: 0;
@@ -558,6 +567,7 @@ body {
 
 /* 密封线 (灰色虚线) */
 .split-line.seal {
+    width: 0;
     background-color: transparent;
     border-left: 2px dashed #64748b;
 }

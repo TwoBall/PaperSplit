@@ -4,8 +4,8 @@ import { elements } from './dom.js';
 import { getPageConfig } from './editor.js';
 
 /**
- * 导出处理后的 PDF (A4 格式)
- * 遍历每一页，根据切割线和密封线，生成两倍数量的 A4 页面
+ * 导出处理后的 PDF
+ * 遍历每一页，根据切割线和密封线裁剪，每页生成贴合裁剪区域的页面 (高度对齐 A4)
  */
 export async function exportPdf() {
     if (!state.pdfDoc && !state.fileData) return;
@@ -14,13 +14,8 @@ export async function exportPdf() {
     elements.exportBtn.textContent = '生成中...';
 
     try {
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4'
-        });
-
-        let addedPageCount = 0;
+        // 延迟创建：首页尺寸需贴合第一片裁剪区域 (所见即所得)
+        let doc = null;
 
         // 遍历所有原始页面
         for (let i = 1; i <= state.totalPages; i++) {
@@ -94,30 +89,27 @@ export async function exportPdf() {
 
                 const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
 
-                if (addedPageCount > 0) doc.addPage();
+                // 所见即所得：页面尺寸 = 裁剪区域。
+                // 高度锁定 A4 (297mm)，宽度按裁剪比例 → 图片铺满整页，无白边、不缩放居中。
+                // 标准 A3 对半切正好得到 210×297 的 A4。
+                const pageHeight = 297;
+                const pageWidth = pageHeight * (sWidth / sHeight);
+                const orientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
 
-                const pdfPageWidth = 210; // A4 宽度 (mm)
-                const pdfPageHeight = 297; // A4 高度 (mm)
-
-                // 适应逻辑 (Fit)
-                const ratio = sWidth / sHeight;
-                let finalWidth = pdfPageWidth;
-                let finalHeight = finalWidth / ratio;
-
-                if (finalHeight > pdfPageHeight) {
-                    finalHeight = pdfPageHeight;
-                    finalWidth = finalHeight * ratio;
+                if (!doc) {
+                    doc = new jsPDF({ unit: 'mm', orientation, format: [pageWidth, pageHeight] });
+                } else {
+                    doc.addPage([pageWidth, pageHeight], orientation);
                 }
 
-                // 居中显示
-                const x = (pdfPageWidth - finalWidth) / 2;
-                const y = (pdfPageHeight - finalHeight) / 2;
-
-                doc.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
-                addedPageCount++;
+                doc.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
             }
         }
 
+        if (!doc) {
+            alert('没有可导出的内容');
+            return;
+        }
         doc.save(`${state.fileName}(A4).pdf`);
 
     } catch (e) {

@@ -90,8 +90,8 @@ export async function renderCurrentPage() {
         viewport = { width: canvas.width, height: canvas.height };
     }
 
-    elements.canvasWrapper.style.width = `${viewport.width}px`;
-    elements.canvasWrapper.style.height = `${viewport.height}px`;
+    elements.canvasWrapper.style.width = `${canvas.width}px`;
+    elements.canvasWrapper.style.height = `${canvas.height}px`;
     elements.canvasWrapper.appendChild(canvas);
 
     // 恢复或添加默认裁切线
