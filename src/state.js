@@ -6,7 +6,8 @@ export const state = {
     currentPage: 1,       // 当前页码
     totalPages: 0,        // 总页数
     scale: 1.5,           // 渲染缩放比例
-    pagesData: {},        // 页面配置数据 { pageIndex: { splitX, sealLine } }
+    columnCount: 2,       // 文档分栏数量 (2 | 3)
+    pagesData: {},        // 页面配置数据 { pageIndex: { splits, sealLine } }
     fileName: 'document', // 当前文件名
     isPdf: true,          // 文件类型标识
     fileData: null        // 图片文件数据 (DataURL)
@@ -20,6 +21,7 @@ export function resetState() {
     state.pdfDoc = null;
     state.currentPage = 1;
     state.totalPages = 0;
+    state.columnCount = 2;
     state.pagesData = {};
     state.fileData = null;
     state.isPdf = true;

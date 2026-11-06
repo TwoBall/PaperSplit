@@ -2,6 +2,7 @@ import { jsPDF } from 'jspdf';
 import { state } from './state.js';
 import { elements } from './dom.js';
 import { getPageConfig } from './editor.js';
+import { buildColumnRanges } from './split-utils.js';
 
 /**
  * 导出处理后的 PDF
@@ -24,36 +25,10 @@ export async function exportPdf() {
         for (let i = 1; i <= state.totalPages; i++) {
             const config = getPageConfig(i);
 
-            // 准备切割区间
-            // 基础区间: [0, split, 1]
-            let ranges = [];
-
             // 逻辑:
-            // 1. 根据密封线确定有效区域
-            // 2. 在有效区域内进行左右分割
-
-            const splitX = config.splitX;
-            const seal = config.sealLine;
-
-            if (seal) {
-                // 密封方向由 seal.type 决定（与线的语义一致），不受其相对分割线的位置影响。
-                // 分割点钳制到保留区域内，避免密封线被拖过分割线时产生反向切片或漏出密封区。
-                if (seal.type === 'left') {
-                    // 左侧密封：丢弃 [0, Seal]，保留 [Seal, 1] 再按分割线切分
-                    const split = Math.min(Math.max(splitX, seal.x), 1);
-                    ranges.push([seal.x, split]);
-                    ranges.push([split, 1]);
-                } else {
-                    // 右侧密封：丢弃 [Seal, 1]，保留 [0, Seal] 再按分割线切分
-                    const split = Math.max(Math.min(splitX, seal.x), 0);
-                    ranges.push([0, split]);
-                    ranges.push([split, seal.x]);
-                }
-            } else {
-                // 无密封: [0 -> Split], [Split -> 1]
-                ranges.push([0, splitX]);
-                ranges.push([splitX, 1]);
-            }
+            // 1. 根据密封线确定有效区域 [lo, hi]
+            // 2. 保留区域内的切割线把页面分成 N 个切片
+            const ranges = buildColumnRanges(config.splits, config.sealLine);
 
             // 渲染高清 Canvas (2倍缩放以保证清晰度)
             let sourceCanvas;

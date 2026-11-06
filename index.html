@@ -92,7 +92,7 @@
                             <div class="step-num">2</div>
                             <div class="step-text">
                                 <strong>调整分割</strong>
-                                <p>拖动红色实线确定 A4 分割位置</p>
+                                <p>选择两栏/三栏，拖动红色实线确定每栏分割位置</p>
                             </div>
                         </div>
                         <div class="step-item">
@@ -117,6 +117,14 @@
                 <div class="panel-section">
                     <h3>🛠️ 编辑工具</h3>
                     <div class="tools-grid">
+                        <div class="control-row">
+                            <label class="sub-label" for="columnCountSelect">分栏数量</label>
+                            <select id="columnCountSelect" class="select-input compact-select">
+                                <option value="2" selected>两栏</option>
+                                <option value="3">三栏</option>
+                            </select>
+                        </div>
+
                         <button id="toggleSealLineBtn" class="btn secondary" disabled>
                             <span class="material-icons">format_shapes</span> 去除密封线
                         </button>

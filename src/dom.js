@@ -8,6 +8,7 @@ export const elements = {
     pageInfo: document.getElementById('pageInfo'),
 
     // New controls
+    columnCountSelect: document.getElementById('columnCountSelect'),
     toggleSealLineBtn: document.getElementById('toggleSealLineBtn'),
     applyToTypeBtn: document.getElementById('applyToTypeBtn'),
     applyToAllBtn: document.getElementById('applyToAllBtn'),
