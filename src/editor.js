@@ -1,16 +1,17 @@
 import { state } from './state.js';
 import { elements } from './dom.js';
+import { getDefaultSplits } from './split-utils.js';
 
 /**
  * 获取或初始化当前页面的配置
- * 结构: { splitX: 0.5, sealLine: null | { x: 0.15 (左) / 0.85 (右), type: 'left'|'right' } }
+ * 结构: { splits: [0.333, 0.667], sealLine: null | { x: 0.15 (左) / 0.85 (右), type: 'left'|'right' } }
  * @param {number} pageIndex 页面索引 (1-based)
  * @returns {Object} 页面配置对象
  */
 export function getPageConfig(pageIndex) {
     if (!state.pagesData[pageIndex]) {
         state.pagesData[pageIndex] = {
-            splitX: 0.5,
+            splits: getDefaultSplits(state.columnCount),
             sealLine: null
         };
     }
@@ -18,17 +19,61 @@ export function getPageConfig(pageIndex) {
 }
 
 /**
+ * 设置文档分栏数量，并按均分位置重置所有页面的切割线
+ * @param {number|string} count 栏数 (2 或 3)
+ */
+export function setColumnCount(count) {
+    const next = Number(count);
+    if (!Number.isInteger(next) || next < 2 || next > 3) return;
+
+    state.columnCount = next;
+    for (let i = 1; i <= state.totalPages; i++) {
+        getPageConfig(i).splits = getDefaultSplits(next);
+    }
+
+    // 尚未加载文件时无需绘制辅助线
+    if (state.pdfDoc || state.fileData) {
+        renderSplitLines();
+    }
+}
+
+/**
+ * 计算某条切割线允许拖动的范围，避免越过相邻切割线
+ * @param {Object} config 页面配置
+ * @param {number} index 切割线序号
+ * @returns {{min: number, max: number}} 允许的比例范围
+ */
+function getSplitBounds(config, index) {
+    const gap = 0.01;
+    const min = index === 0 ? gap : config.splits[index - 1] + gap;
+    const max = index === config.splits.length - 1 ? 1 - gap : config.splits[index + 1] - gap;
+    return { min, max };
+}
+
+/**
  * 渲染当前页的所有辅助线 (切割线 + 密封线)
  */
 export function renderSplitLines() {
+    if (!state.pdfDoc && !state.fileData) return;
+
     // 清除现有的线
     elements.canvasWrapper.querySelectorAll('.split-line').forEach(e => e.remove());
 
     const config = getPageConfig(state.currentPage);
 
-    // 1. 渲染切割线 (始终存在)
-    createLineElement(config.splitX, 'split', (newIter) => {
-        config.splitX = newIter;
+    // 同步栏数选择器
+    if (elements.columnCountSelect) {
+        elements.columnCountSelect.value = String(config.splits.length + 1);
+    }
+
+    // 1. 渲染切割线 (每栏边界一条)
+    config.splits.forEach((x, index) => {
+        createLineElement(
+            x,
+            'split',
+            (newRatio) => { config.splits[index] = newRatio; },
+            () => getSplitBounds(config, index)
+        );
     });
 
     // 2. 渲染密封线 (如果存在)
@@ -57,8 +102,9 @@ export function renderSplitLines() {
  * @param {number} initialX 初始位置比例 (0-1)
  * @param {string} type 线条类型 ('split' | 'seal')
  * @param {Function} onUpdate 更新位置回调
+ * @param {Function} [getBounds] 返回允许拖动范围的函数
  */
-function createLineElement(initialX, type, onUpdate) {
+function createLineElement(initialX, type, onUpdate, getBounds) {
     const lineEl = document.createElement('div');
     lineEl.className = `split-line ${type}`;
     lineEl.style.left = `${initialX * 100}%`;
@@ -88,8 +134,15 @@ function createLineElement(initialX, type, onUpdate) {
         // 边界限制 (0% - 100%)
         newPercent = Math.max(0, Math.min(newPercent, 100));
 
-        lineEl.style.left = `${newPercent}%`;
-        onUpdate(newPercent / 100);
+        // 切割线之间保持间隙，避免越过相邻切割线
+        let ratio = newPercent / 100;
+        if (getBounds) {
+            const { min, max } = getBounds();
+            ratio = Math.max(min, Math.min(ratio, max));
+        }
+
+        lineEl.style.left = `${ratio * 100}%`;
+        onUpdate(ratio);
     };
 
     const onDragEnd = () => {

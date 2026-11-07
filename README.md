@@ -14,7 +14,7 @@
 ### ✨ Key Features
 
 *   **Smart Import**: Supports drag-and-drop for A3 PDFs or images (JPG/PNG).
-*   **Visual Splitting**: Provides an intuitive red splitter line to manually adjust the cut position between pages.
+*   **Visual Splitting**: Supports two- or three-column layouts, with draggable red splitter lines to adjust each cut position.
 *   **Seal Line Removal**:
     *   Dedicated "Remove Seal Line" mode.
     *   **Smart Detection**: Odd pages default to left, even pages default to right.
@@ -22,7 +22,7 @@
 *   **Batch Application**:
     *   **Apply to Same Type**: One-click apply settings to all Odd or all Even pages.
     *   **Apply to All**: Apply current configuration to every page.
-*   **HD Export**: Generates high-quality A4 PDF documents using `jsPDF`, with selectable page-fit modes (standard A4 with margins, stretch-to-fill, or original crop size).
+*   **HD Export**: Generates high-quality A4 PDF documents using `jsPDF`, with selectable page-fit modes (standard A4 with margins, auto-trim uniform scaling, stretch-to-fill, or original crop size).
 *   **Responsive Design**: Works perfectly on both PC and mobile devices.
 
 ### 🚀 Quick Start
@@ -42,7 +42,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 #### 3. How to Use
 1.  **Import**: Click "Select File" or drag your file into the workspace.
 2.  **Adjust**:
-    *   Move the **Red Line** to set the A4 split position.
+    *   Choose **two or three columns**, then move the **Red Lines** to set each cut position.
     *   Click "**Remove Seal Line**" to add a cut-off area if needed (draggable).
 3.  **Batch**: Use "Same Type" or "All Pages" buttons to apply your settings to other pages.
 4.  **Export**: Click "Export as PDF (A4)" to download your processed file.
@@ -58,7 +58,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 ### ✨ 核心功能
 
 *   **智能导入**：支持拖拽上传 A3 PDF 文件或图片（JPG/PNG）。
-*   **可视化分割**：提供直观的红色分割线，可手动调整左右页面的分割位置。
+*   **可视化分割**：支持两栏 / 三栏版面，每条红色分割线均可拖动调整切割位置。
 *   **密封线处理**：
     *   支持“去除密封线”模式。
     *   **智能识别**：奇数页默认在左侧，偶数页默认在右侧。
@@ -66,7 +66,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 *   **批量应用**：
     *   **同类页**：一键应用当前配置到所有奇数页或所有偶数页。
     *   **所有页**：一键应用到文档所有页面。
-*   **高清导出**：基于 `jsPDF` 生成高质量的 A4 PDF 文档，并可选择导出尺寸适配方式（标准A4等比留白 / 拉伸填满 / 原始裁剪尺寸）。
+*   **高清导出**：基于 `jsPDF` 生成高质量的 A4 PDF 文档，并可选择导出尺寸适配方式（标准A4等比留白 / 去白边等比放大 / 拉伸填满 / 原始裁剪尺寸）。
 *   **响应式设计**：完美适配 PC 和移动端操作，手机上也能轻松处理试卷。
 
 ### 🚀 快速开始
@@ -85,7 +85,7 @@ npm run dev
 #### 3. 使用流程
 1.  **导入**：点击“选择文件”或直接拖拽文件到工作区。
 2.  **调整**：
-    *   移动红色**分割线**确定左右分页界限。
+    *   选择**两栏 / 三栏**，再移动红色**分割线**确定各栏分页界限。
     *   若有密封线需要去除，点击“去除密封线”，调整灰色虚线区域。
 3.  **批量**：调整好一页后，点击“同类页”或“所有页”将配置应用到其他页面。
 4.  **导出**：点击底部的“导出为 PDF (A4)”，文件将自动下载。
@@ -113,6 +113,7 @@ npm run dev
 │   ├── file-handler.js # File Upload & Processing
 │   ├── viewer.js       # Canvas Rendering
 │   ├── editor.js       # Split/Seal Line Logic
+│   ├── split-utils.js  # Column Split/Slice Math
 │   └── exporter.js     # PDF Export Logic
 └── DEPLOY.md           # Deployment Guide
 ```
@@ -124,6 +125,10 @@ npm run dev
 MIT License
 
 ## 📅 Changelog / 更新日志
+
+### 2026-11-07 (Three-Column Support / 三栏支持)
+- **Multi-Column Splitting**: Added a column-count selector (two or three columns) and generic slice export. Each split line is draggable and clamped between its neighbors, so three-column exam papers are cut into three pages per sheet. 新增两栏 / 三栏选择与通用切片导出；每条分割线可独立拖动且不会越过相邻分割线，三栏试卷每张可切出三页。
+- **Auto-Trim Uniform Scaling**: Added an "标准 A4（去白边等比放大）" export mode. It detects page whitespace, crops it, and applies one document-wide scale so every output page keeps the same text size without distortion (about 7–10% larger than plain A4 fit on scanned papers). The stretch-to-fill option is now labelled as distorting. 新增“去白边等比放大”导出模式：自动裁掉扫描空白并全文档统一比例缩放，各页字号一致且不变形；拉伸填满选项已注明会变形。
 
 ### 2026-06-20 (Export Fit Modes / 导出尺寸适配)
 - **Selectable Export Fit**: Added an "导出尺寸" selector with three modes — **Standard A4 (fit, with margins)** [default], **Standard A4 (stretch to fill)**, and **Original crop size (WYSIWYG)**. Dragging the split line off-center no longer forces non-A4 pages unless you choose WYSIWYG. 新增"导出尺寸"选择器：标准A4等比留白(默认)、标准A4拉伸填满、原始裁剪尺寸；切割线偏离中心也能稳定输出标准 A4。

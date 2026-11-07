@@ -2,7 +2,7 @@ import { elements } from './dom.js';
 import { state } from './state.js';
 import { handleFileUpload } from './file-handler.js';
 import { changePage, renderCurrentPage } from './viewer.js';
-import { toggleSealLine, applySplitToType, applySplitToAll } from './editor.js';
+import { toggleSealLine, applySplitToType, applySplitToAll, setColumnCount } from './editor.js';
 import { exportPdf } from './exporter.js';
 
 /**
@@ -18,6 +18,9 @@ function initEventListeners() {
     elements.prevPageBtn.addEventListener('click', () => changePage(state.currentPage - 1));
     elements.nextPageBtn.addEventListener('click', () => changePage(state.currentPage + 1));
 
+    if (elements.columnCountSelect) {
+        elements.columnCountSelect.addEventListener('change', (e) => setColumnCount(e.target.value));
+    }
     elements.toggleSealLineBtn.addEventListener('click', toggleSealLine);
     elements.applyToTypeBtn.addEventListener('click', () => applySplitToType());
     elements.applyToAllBtn.addEventListener('click', () => applySplitToAll());

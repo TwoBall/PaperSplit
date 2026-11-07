@@ -478,6 +478,14 @@ body {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Compact inline selector (e.g. column count) */
+.control-row .compact-select {
+    width: auto;
+    min-width: 110px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
 .select-input:hover {
     border-color: #cbd5e1;
 }
