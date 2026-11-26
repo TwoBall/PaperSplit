@@ -2,14 +2,30 @@ import { jsPDF } from 'jspdf';
 import { state } from './state.js';
 import { elements } from './dom.js';
 import { getPageConfig } from './editor.js';
+import { renderPageCanvas } from './page-renderer.js';
+import { updatePageControls } from './viewer.js';
+
+const EXPORT_SCALE = 2;
+
+/**
+ * 渲染用于导出的高清、方向已校正 Canvas
+ * @param {number} pageIndex 页面索引 (1-based)
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+async function renderSourceCanvas(pageIndex) {
+    const { canvas } = await renderPageCanvas(pageIndex, { scale: state.isPdf ? EXPORT_SCALE : 1 });
+    return canvas;
+}
 
 /**
  * 导出处理后的 PDF
  * 遍历每一页，根据切割线和密封线裁剪，每页生成贴合裁剪区域的页面 (高度对齐 A4)
  */
 export async function exportPdf() {
-    if (!state.pdfDoc && !state.fileData) return;
+    if (state.isExporting || (!state.pdfDoc && !state.fileData)) return;
 
+    state.isExporting = true;
+    updatePageControls();
     elements.exportBtn.disabled = true;
     elements.exportBtn.textContent = '生成中...';
 
@@ -55,24 +71,8 @@ export async function exportPdf() {
                 ranges.push([splitX, 1]);
             }
 
-            // 渲染高清 Canvas (2倍缩放以保证清晰度)
-            let sourceCanvas;
-            if (state.isPdf) {
-                const page = await state.pdfDoc.getPage(i);
-                const viewport = page.getViewport({ scale: 2 });
-                sourceCanvas = document.createElement('canvas');
-                sourceCanvas.width = viewport.width;
-                sourceCanvas.height = viewport.height;
-                await page.render({ canvasContext: sourceCanvas.getContext('2d'), viewport }).promise;
-            } else {
-                const img = new Image();
-                img.src = state.fileData;
-                await new Promise(r => img.onload = r);
-                sourceCanvas = document.createElement('canvas');
-                sourceCanvas.width = img.width;
-                sourceCanvas.height = img.height;
-                sourceCanvas.getContext('2d').drawImage(img, 0, 0);
-            }
+            // 渲染高清 Canvas (2倍缩放以保证清晰度)，并应用页面方向设置。
+            const sourceCanvas = await renderSourceCanvas(i);
 
             // 执行切割
             for (let rng of ranges) {
@@ -147,6 +147,8 @@ export async function exportPdf() {
         console.error(e);
         alert('导出失败: ' + e.message);
     } finally {
+        state.isExporting = false;
+        updatePageControls();
         elements.exportBtn.disabled = false;
         elements.exportBtn.innerHTML = '<span class="material-icons">save_alt</span> 导出为 PDF (A4)';
     }

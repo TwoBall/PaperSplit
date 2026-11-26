@@ -12,6 +12,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${version
  * 支持 PDF 和 图片格式
  */
 export async function handleFileUpload(e) {
+    if (state.isExporting) return;
     const file = e.target.files[0];
     if (!file) return;
 
@@ -28,6 +29,7 @@ export async function handleFileUpload(e) {
     }
 
     elements.thumbnailsPanel.innerHTML = '';
+    updatePageControls();
     elements.emptyState.style.display = 'none';
 
     // 显示缩略图面板（之前隐藏的）
@@ -83,16 +85,7 @@ function loadImage(file) {
         state.pdfDoc = null;
 
         updatePageControls();
-        // 生成简单的图片缩略图
-        elements.thumbnailsPanel.innerHTML = '';
-        const thumb = document.createElement('div');
-        thumb.className = 'thumbnail-item active';
-        const img = document.createElement('img');
-        img.src = state.fileData;
-        img.style.width = '100%';
-        thumb.appendChild(img);
-        elements.thumbnailsPanel.appendChild(thumb);
-
+        renderThumbnails();
         renderCurrentPage();
     };
     reader.readAsDataURL(file);

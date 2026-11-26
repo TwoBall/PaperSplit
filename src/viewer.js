@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { elements } from './dom.js';
 import { renderSplitLines } from './editor.js';
+import { renderPageCanvas } from './page-renderer.js';
 
 /**
  * 切换到指定页面
@@ -24,9 +25,26 @@ export function changePage(pageNum) {
  * 更新分页控件状态 (页码显示、按钮禁用)
  */
 export function updatePageControls() {
-    elements.pageInfo.textContent = `${state.currentPage} / ${state.totalPages}`;
+    elements.pageInfo.textContent = `${state.totalPages ? state.currentPage : 0} / ${state.totalPages}`;
     elements.prevPageBtn.disabled = state.currentPage <= 1;
     elements.nextPageBtn.disabled = state.currentPage >= state.totalPages;
+
+    const disabled = !state.totalPages || state.isExporting;
+    for (const button of [elements.selectAllPagesBtn, elements.rotateLeftBtn, elements.rotateRightBtn,
+        elements.flipHorizontalBtn, elements.flipVerticalBtn, elements.resetPageTransformBtn]) {
+        button.disabled = disabled;
+    }
+    elements.clearPageSelectionBtn.disabled = disabled || !state.selectedPages.size;
+    elements.selectionInfo.textContent = state.selectedPages.size
+        ? `作用范围：已勾选 ${state.selectedPages.size} / ${state.totalPages} 页`
+        : state.totalPages ? `作用范围：当前第 ${state.currentPage} 页` : '请先导入文件';
+    elements.thumbnailsPanel.querySelectorAll('.thumbnail-item').forEach(thumb => {
+        const selected = state.selectedPages.has(Number(thumb.dataset.pageNumber));
+        thumb.classList.toggle('selected', selected);
+        const checkbox = thumb.querySelector('input');
+        checkbox.checked = selected;
+        checkbox.disabled = state.isExporting;
+    });
 }
 
 /**
@@ -39,62 +57,12 @@ export async function renderCurrentPage() {
     // 每次渲染分配一个唯一令牌；异步完成后若令牌已过期则丢弃，避免并发渲染叠加重影
     const myToken = ++renderToken;
 
-    let canvas, viewport;
-
-    if (state.isPdf) {
-        const page = await state.pdfDoc.getPage(state.currentPage);
-        const unscaledViewport = page.getViewport({ scale: 1 });
-
-        // 获取容器的可用宽高 (减去 padding)
-        const availableWidth = elements.canvasContainer.clientWidth - 40;
-        const availableHeight = elements.canvasContainer.clientHeight - 40;
-
-        // 计算宽和高的缩放比例
-        const scaleX = availableWidth / unscaledViewport.width;
-        const scaleY = availableHeight / unscaledViewport.height;
-
-        // 取较小值，确保完全包含 (Fit Page)
-        let scale = Math.min(scaleX, scaleY);
-
-        // 限制最大放大倍数，防止像素化
-        if (scale > 1.5) scale = 1.5;
-
-        viewport = page.getViewport({ scale: scale });
-        canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        await page.render({
-            canvasContext: context,
-            viewport: viewport
-        }).promise;
-    } else {
-        // 图片渲染
-        const img = new Image();
-        await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = state.fileData;
-        });
-
-        const availableWidth = elements.canvasContainer.clientWidth - 40;
-        const availableHeight = elements.canvasContainer.clientHeight - 40;
-
-        const scaleX = availableWidth / img.width;
-        const scaleY = availableHeight / img.height;
-        let scale = Math.min(scaleX, scaleY);
-
-        if (scale > 1) scale = 1;
-
-        canvas = document.createElement('canvas');
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        const context = canvas.getContext('2d');
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        viewport = { width: canvas.width, height: canvas.height };
-    }
+    if (!state.pdfDoc && !state.fileData) return;
+    const { canvas } = await renderPageCanvas(state.currentPage, {
+        scale: state.isPdf ? 1.5 : 1,
+        maxWidth: elements.canvasContainer.clientWidth - 40,
+        maxHeight: elements.canvasContainer.clientHeight - 40
+    });
 
     // 渲染期间若有更新的渲染请求（翻页/缩放），则放弃本次结果
     if (myToken !== renderToken) return;
@@ -113,47 +81,60 @@ export async function renderCurrentPage() {
  */
 export async function renderThumbnails() {
     elements.thumbnailsPanel.innerHTML = '';
-
     for (let i = 1; i <= state.totalPages; i++) {
         const thumbainer = document.createElement('div');
         thumbainer.className = `thumbnail-item ${i === state.currentPage ? 'active' : ''}`;
         thumbainer.dataset.pageNumber = i;
+        thumbainer.tabIndex = 0;
+        thumbainer.setAttribute('role', 'button');
+        thumbainer.setAttribute('aria-label', `预览第 ${i} 页`);
         thumbainer.onclick = () => changePage(i);
+        thumbainer.onkeydown = event => {
+            if (event.target === thumbainer && (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault();
+                changePage(i);
+            }
+        };
 
-        let canvas;
-
-        if (state.isPdf) {
-            const page = await state.pdfDoc.getPage(i);
-            const viewport = page.getViewport({ scale: 0.2 }); // 缩略图比例
-            canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            await page.render({
-                canvasContext: context,
-                viewport: viewport
-            }).promise;
-        } else {
-            // 图片缩略图
-            const img = new Image();
-            img.src = state.fileData;
-            await new Promise(r => img.onload = r);
-
-            // 简单的缩放
-            const scale = 0.2; // 略微缩小
-            canvas = document.createElement('canvas');
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        }
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'page-selection';
+        checkbox.setAttribute('aria-label', `选择第 ${i} 页进行方向调整`);
+        checkbox.addEventListener('click', event => event.stopPropagation());
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) state.selectedPages.add(i);
+            else state.selectedPages.delete(i);
+            updatePageControls();
+        });
 
         const pageNum = document.createElement('div');
         pageNum.className = 'page-number';
         pageNum.textContent = i;
 
-        thumbainer.appendChild(canvas);
+        thumbainer.appendChild(checkbox);
         thumbainer.appendChild(pageNum);
         elements.thumbnailsPanel.appendChild(thumbainer);
     }
+    updatePageControls();
+    // 先建立所有缩略图容器，使用户可以立即选择任意页面。
+    const thumbnails = [...elements.thumbnailsPanel.children];
+    for (const thumbnail of thumbnails) {
+        if (!thumbnail.isConnected) return;
+        await renderThumbnail(Number(thumbnail.dataset.pageNumber));
+    }
+}
+
+const thumbnailTokens = new WeakMap();
+
+/** 只刷新指定页，并丢弃快速连续操作产生的过期渲染。 */
+export async function renderThumbnail(pageIndex) {
+    const thumbnail = elements.thumbnailsPanel.querySelector(`[data-page-number="${pageIndex}"]`);
+    if (!thumbnail) return;
+    const token = (thumbnailTokens.get(thumbnail) || 0) + 1;
+    thumbnailTokens.set(thumbnail, token);
+    const { canvas } = await renderPageCanvas(pageIndex, { scale: 0.2, maxWidth: 200 });
+    if (!thumbnail.isConnected || thumbnailTokens.get(thumbnail) !== token) return;
+    const previous = thumbnail.querySelector('canvas');
+    if (previous) previous.replaceWith(canvas);
+    else thumbnail.prepend(canvas);
 }

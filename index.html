@@ -115,6 +115,35 @@
                 <div class="panel-divider"></div>
 
                 <div class="panel-section">
+                    <h3><span class="material-icons">rotate_right</span> 页面方向</h3>
+                    <div class="tools-grid">
+                        <p id="selectionInfo" class="sub-label" aria-live="polite">请先导入文件</p>
+                        <div class="btn-group">
+                            <button id="selectAllPagesBtn" class="btn secondary" disabled>全选页面</button>
+                            <button id="clearPageSelectionBtn" class="btn secondary" disabled>取消选择</button>
+                        </div>
+                        <div class="btn-group">
+                            <button id="rotateLeftBtn" class="btn secondary" disabled title="向左旋转 90°">
+                                <span class="material-icons" aria-hidden="true">rotate_left</span> 左转 90°
+                            </button>
+                            <button id="rotateRightBtn" class="btn secondary" disabled title="向右旋转 90°">
+                                <span class="material-icons" aria-hidden="true">rotate_right</span> 右转 90°
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button id="flipHorizontalBtn" class="btn secondary" disabled>
+                                <span class="material-icons" aria-hidden="true">flip</span> 水平翻转
+                            </button>
+                            <button id="flipVerticalBtn" class="btn secondary" disabled>
+                                <span class="material-icons flip-vertical-icon" aria-hidden="true">flip</span> 垂直翻转
+                            </button>
+                        </div>
+                        <button id="resetPageTransformBtn" class="btn secondary" disabled>恢复原始方向</button>
+                        <p class="helper-text">未勾选时调整当前页；勾选左侧页面可批量调整。先校正方向，再拖动分割线；导出保留全部页面。</p>
+                    </div>
+                </div>
+
+                <div class="panel-section">
                     <h3>🛠️ 编辑工具</h3>
                     <div class="tools-grid">
                         <button id="toggleSealLineBtn" class="btn secondary" disabled>

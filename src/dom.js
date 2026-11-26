@@ -6,6 +6,14 @@ export const elements = {
     prevPageBtn: document.getElementById('prevPageBtn'),
     nextPageBtn: document.getElementById('nextPageBtn'),
     pageInfo: document.getElementById('pageInfo'),
+    selectionInfo: document.getElementById('selectionInfo'),
+    selectAllPagesBtn: document.getElementById('selectAllPagesBtn'),
+    clearPageSelectionBtn: document.getElementById('clearPageSelectionBtn'),
+    rotateLeftBtn: document.getElementById('rotateLeftBtn'),
+    rotateRightBtn: document.getElementById('rotateRightBtn'),
+    flipHorizontalBtn: document.getElementById('flipHorizontalBtn'),
+    flipVerticalBtn: document.getElementById('flipVerticalBtn'),
+    resetPageTransformBtn: document.getElementById('resetPageTransformBtn'),
 
     // New controls
     toggleSealLineBtn: document.getElementById('toggleSealLineBtn'),

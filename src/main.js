@@ -4,6 +4,7 @@ import { handleFileUpload } from './file-handler.js';
 import { changePage, renderCurrentPage } from './viewer.js';
 import { toggleSealLine, applySplitToType, applySplitToAll } from './editor.js';
 import { exportPdf } from './exporter.js';
+import { selectAllPages, transformPages } from './page-tools.js';
 
 /**
  * 初始化所有事件监听器
@@ -17,6 +18,13 @@ function initEventListeners() {
 
     elements.prevPageBtn.addEventListener('click', () => changePage(state.currentPage - 1));
     elements.nextPageBtn.addEventListener('click', () => changePage(state.currentPage + 1));
+    elements.selectAllPagesBtn.addEventListener('click', () => selectAllPages(true));
+    elements.clearPageSelectionBtn.addEventListener('click', () => selectAllPages(false));
+    elements.rotateLeftBtn.addEventListener('click', () => transformPages('rotate-left'));
+    elements.rotateRightBtn.addEventListener('click', () => transformPages('rotate-right'));
+    elements.flipHorizontalBtn.addEventListener('click', () => transformPages('flip-horizontal'));
+    elements.flipVerticalBtn.addEventListener('click', () => transformPages('flip-vertical'));
+    elements.resetPageTransformBtn.addEventListener('click', () => transformPages('reset'));
 
     elements.toggleSealLineBtn.addEventListener('click', toggleSealLine);
     elements.applyToTypeBtn.addEventListener('click', () => applySplitToType());

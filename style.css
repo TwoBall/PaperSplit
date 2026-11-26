@@ -150,6 +150,7 @@ body {
 
 .thumbnail-item {
     cursor: pointer;
+    flex-shrink: 0;
     border: 2px solid transparent;
     border-radius: var(--radius);
     overflow: hidden;
@@ -167,6 +168,32 @@ body {
 .thumbnail-item.active {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.thumbnail-item.selected {
+    background-color: #eef2ff;
+    border-color: var(--primary-color);
+}
+
+.thumbnail-item:focus-visible,
+.page-selection:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.page-selection {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+    z-index: 1;
+}
+
+.flip-vertical-icon {
+    transform: rotate(90deg);
 }
 
 .thumbnail-item canvas {

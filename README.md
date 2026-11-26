@@ -14,6 +14,7 @@
 ### ✨ Key Features
 
 *   **Smart Import**: Supports drag-and-drop for A3 PDFs or images (JPG/PNG).
+*   **Page Orientation**: Rotate pages left/right in 90° steps, flip horizontally/vertically, or restore the original orientation. Use thumbnail checkboxes or Select All for batch adjustments. Preview, thumbnails, and exports share the same orientation; exporting keeps all pages.
 *   **Visual Splitting**: Provides an intuitive red splitter line to manually adjust the cut position between pages.
 *   **Seal Line Removal**:
     *   Dedicated "Remove Seal Line" mode.
@@ -42,6 +43,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 #### 3. How to Use
 1.  **Import**: Click "Select File" or drag your file into the workspace.
 2.  **Adjust**:
+    *   Correct the page orientation first. With no pages checked, orientation tools affect the current page; check thumbnails to adjust multiple pages.
     *   Move the **Red Line** to set the A4 split position.
     *   Click "**Remove Seal Line**" to add a cut-off area if needed (draggable).
 3.  **Batch**: Use "Same Type" or "All Pages" buttons to apply your settings to other pages.
@@ -58,6 +60,7 @@ Open the local URL shown in the terminal (usually `http://localhost:5173`).
 ### ✨ 核心功能
 
 *   **智能导入**：支持拖拽上传 A3 PDF 文件或图片（JPG/PNG）。
+*   **页面方向**：支持左转 / 右转 90°、水平 / 垂直翻转和恢复原始方向。可通过缩略图勾选或全选批量调整；预览、缩略图和导出方向一致，导出保留全部页面。
 *   **可视化分割**：提供直观的红色分割线，可手动调整左右页面的分割位置。
 *   **密封线处理**：
     *   支持“去除密封线”模式。
@@ -85,6 +88,7 @@ npm run dev
 #### 3. 使用流程
 1.  **导入**：点击“选择文件”或直接拖拽文件到工作区。
 2.  **调整**：
+    *   先校正页面方向：未勾选时调整当前页；勾选左侧缩略图后可批量旋转或翻转。
     *   移动红色**分割线**确定左右分页界限。
     *   若有密封线需要去除，点击“去除密封线”，调整灰色虚线区域。
 3.  **批量**：调整好一页后，点击“同类页”或“所有页”将配置应用到其他页面。
@@ -144,4 +148,3 @@ MIT License
 - **UI Redesign**: Replaced split-line dots with an arrow handle (`↔`) for better visibility and usability.
 - **Style Optimization**: Refactored `style.css` with cleaner structure and removed redundant code.
 - **Branding**: Updated project icon and header logo.
-
